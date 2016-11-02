@@ -12,12 +12,15 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var trayView: UIView!
     var trayOriginalCenter: CGPoint!
+    var originTray: Bool!
+    let constDown: CGFloat = 150
     
 
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
         trayOriginalCenter = trayView.center
+        originTray = true
     }
 
     override func didReceiveMemoryWarning() {
@@ -35,12 +38,29 @@ class ViewController: UIViewController {
             print("Gesture began at: \(point)")
         } else if panGestureRecognizer.state == UIGestureRecognizerState.changed {
             print("Gesture changed at: \(point)")
-            trayView.center = CGPoint(x: trayOriginalCenter.x, y: trayOriginalCenter.y + translation.y)
+//            trayView.center = CGPoint(x: trayOriginalCenter.x, y: trayOriginalCenter.y + translation.y)
             
         } else if panGestureRecognizer.state == UIGestureRecognizerState.ended {
-            print("Gesture ended at: \(point)")
-        }
+            if panGestureRecognizer.velocity(in: self.view).y > 0 && originTray {
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.trayView.frame.origin = CGPoint(x: self.trayView.frame.origin.x, y: self.trayView.frame.origin.y + self.constDown)
+                    self.originTray = false
+                })
+                
+                
+            } else {
+                if panGestureRecognizer.velocity(in: self.view).y < 0 && originTray == false {
+                UIView.animate(withDuration: 0.5, animations: {
+                    self.trayView.frame.origin = CGPoint(x: self.trayView.frame.origin.x, y: self.trayView.frame.origin.y - self.constDown)
+                    self.originTray = true
+                })
+            }
+            }
+            }
+        
+
     }
+    
 
 }
 
